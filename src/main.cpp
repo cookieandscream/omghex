@@ -25,9 +25,9 @@ bool g_quit;
 
 void lookup_color(size_t index, float &r, float &g, float &b) {
     index = index % color_table_num_colors;
-    r = color_table[index + 0];
-    g = color_table[index + 1];
-    b = color_table[index + 2];
+    r = 1.0f * color_table[index + 0] / 255.0f;
+    g = 1.0f * color_table[index + 1] / 255.0f;
+    b = 1.0f * color_table[index + 2] / 255.0f;
 }
 
 
