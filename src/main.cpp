@@ -3,12 +3,17 @@
 #include <cstdlib>
 #include <iostream>
 
-#define GL_GLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES 1
+#define GL3_PROTOTYPES 1
 
 #include "SDL.h"
 
-//#include <OpenGL/gl3.h>
+#if defined(__MACOSX__)
+#include <OpenGL/gl3.h>
+//#include <OpenGL/gl3ext.h>
+#else
 #include "SDL_opengl.h"
+#endif
 
 #include "utils.h"
 
@@ -66,17 +71,16 @@ void foo() {
     }
 }
 
-#define gl_assert_ok()  do {                                \
-    GLenum error = glGetError();                            \
-    if (error) {                                            \
-        do {                                                \
-            std::cout << "gl error in " << __FILE__ <<      \
-                " at line " << __LINE__ <<                  \
-                ": " << error << std::endl;                 \
-        } while ((error = glGetError()));                   \
-        exit(1);                                            \
-    }                                                       \
-} while(0)                                                  \
+#define gl_assert_ok()  do {                                    \
+    GLenum error = glGetError();                                \
+    if (error) {                                                \
+        do {                                                    \
+            fprintf(stderr, "gl error in %s at line %d: %d\n",  \
+                __FILE__, __LINE__, error);                     \
+        } while ((error = glGetError()));                       \
+        exit(1);                                                \
+    }                                                           \
+} while(0)                                                      \
 
 int main (int argc, char **argv) {
     setup(480, 480);
@@ -143,7 +147,6 @@ int main (int argc, char **argv) {
     glGetShaderiv(vshader, GL_COMPILE_STATUS, &shader_ok);
     if (not shader_ok) {
         fprintf(stderr, "failed to compile vertex shader\n");
-//        show_info_log(vshader, glGetShaderiv, glGetShaderInfoLog);
 
         GLint log_length;
         char *log;
@@ -189,8 +192,8 @@ int main (int argc, char **argv) {
     glBindAttribLocation(program, 0, "position");
     glLinkProgram(program);
 
-//    glDeleteShader(vshader);
-//    glDeleteShader(fshader);
+    glDeleteShader(vshader);
+    glDeleteShader(fshader);
 
     glGetProgramiv(program, GL_LINK_STATUS, &program_ok);
     if (not program_ok) {
