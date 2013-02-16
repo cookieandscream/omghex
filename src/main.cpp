@@ -15,12 +15,21 @@
 #include "SDL_opengl.h"
 #endif
 
+#include "color_table.h"
 #include "utils.h"
 
 SDL_Window *g_window;
 SDL_GLContext g_glContext;
 
 bool g_quit;
+
+void lookup_color(size_t index, float &r, float &g, float &b) {
+    index = index % color_table_num_colors;
+    r = color_table[index + 0];
+    g = color_table[index + 1];
+    b = color_table[index + 2];
+}
+
 
 void setup(int w, int h) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
