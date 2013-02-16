@@ -91,6 +91,40 @@ void foo() {
     }                                                           \
 } while(0)                                                      \
 
+GLuint make_shader(const char * path, GLenum shader_type) {
+    size_t source_len;
+    GLchar *source = (GLchar *) file_contents(path, &source_len);
+    if (not source)  return 0;
+
+    GLuint shader = glCreateShader(shader_type);
+    if (not shader)  return 0;
+
+    GLint tmp_len = source_len;
+    glShaderSource(shader, 1, (const GLchar **) &source, &tmp_len);
+    free(source);
+
+    glCompileShader(shader);
+    GLint shader_ok;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &shader_ok);
+
+    if (not shader_ok) {
+        fprintf(stderr, "failed to compile shader %s\n", path);
+
+        GLint log_length;
+        GLchar *log;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
+        log = (GLchar *) malloc(log_length);
+        glGetShaderInfoLog(shader, log_length, NULL, log);
+        fprintf(stderr, "%s", log);
+        free(log);
+
+        glDeleteShader(shader);
+        return 0;
+    }
+
+    return shader;
+}
+
 struct vertex {
     GLfloat position[3];
     GLfloat color[3];
@@ -145,59 +179,11 @@ int main (int argc, char **argv) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebuf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
-    size_t tmp_size;
+    GLuint vshader = make_shader("shader-src/blah.vert", GL_VERTEX_SHADER);
+    if (not vshader) exit(1);
 
-    GLchar *vsrc;
-    GLint vlen;
-    GLuint vshader;
-    GLint shader_ok;
-
-    vsrc = (GLchar *) file_contents("shader-src/blah.vert", &tmp_size);
-    vlen = tmp_size;
-    vshader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vshader, 1, (const GLchar **) &vsrc, &vlen);
-    free(vsrc);
-    glCompileShader(vshader);
-    glGetShaderiv(vshader, GL_COMPILE_STATUS, &shader_ok);
-    if (not shader_ok) {
-        fprintf(stderr, "failed to compile vertex shader\n");
-
-        GLint log_length;
-        char *log;
-        glGetShaderiv(vshader, GL_INFO_LOG_LENGTH, &log_length);
-        log = (char *) malloc(log_length);
-        glGetShaderInfoLog(vshader, log_length, NULL, log);
-        fprintf(stderr, "%s", log);
-        free(log);
-
-        glDeleteShader(vshader);
-        exit(1);
-    }
-
-    GLchar *fsrc;
-    GLint flen;
-    GLuint fshader;
-    fsrc = (GLchar *) file_contents("shader-src/blah.frag", &tmp_size);
-    flen = tmp_size;
-    fshader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fshader, 1, (const GLchar **) &fsrc, &flen);
-    free(fsrc);
-    glCompileShader(fshader);
-    glGetShaderiv(fshader, GL_COMPILE_STATUS, &shader_ok);
-    if (not shader_ok) {
-        fprintf(stderr, "failed to compile fragment shader\n");
-
-        GLint log_length;
-        char *log;
-        glGetShaderiv(fshader, GL_INFO_LOG_LENGTH, &log_length);
-        log = (char *) malloc(log_length);
-        glGetShaderInfoLog(fshader, log_length, NULL, log);
-        fprintf(stderr, "%s", log);
-        free(log);
-
-        glDeleteShader(fshader);
-        exit(1);
-    }
+    GLuint fshader = make_shader("shader-src/blah.frag", GL_FRAGMENT_SHADER);
+    if (not fshader) exit(1);
 
     GLint program_ok;
     GLuint program = glCreateProgram();
