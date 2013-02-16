@@ -91,6 +91,11 @@ void foo() {
     }                                                           \
 } while(0)                                                      \
 
+struct vertex {
+    GLfloat position[3];
+    GLfloat color[3];
+};
+
 int main (int argc, char **argv) {
     setup(480, 480);
     foo();
@@ -108,14 +113,14 @@ int main (int argc, char **argv) {
     float sqrt_3_2_r = sqrt_3 * r / 2.0f;
     float r_2 = r / 2.0f;
 
-    static const GLfloat vertices[] = {
-        0.0f, 0.0f,
-        sqrt_3_2_r, -r_2,
-        sqrt_3_2_r, r_2,
-        0.0f, r,
-        -sqrt_3_2_r, r_2,
-        -sqrt_3_2_r, -r_2,
-        0.0f, -r,
+    static const vertex vertices[] = {
+        { { 0.0f, 0.0f, 0.0f },         { 1.0f, 0.0f, 0.0f } },
+        { { sqrt_3_2_r, -r_2, 0.0f },   { 1.0f, 0.0f, 0.0f } },
+        { { sqrt_3_2_r, r_2, 0.0f },    { 1.0f, 0.0f, 0.0f } },
+        { { 0.0f, r, 0.0f },            { 1.0f, 0.0f, 0.0f } },
+        { { -sqrt_3_2_r, r_2, 0.0f },   { 1.0f, 0.0f, 0.0f } },
+        { { -sqrt_3_2_r, -r_2, 0.0f },  { 1.0f, 0.0f, 0.0f } },
+        { { 0.0f, -r, 0.0f },           { 1.0f, 0.0f, 0.0f } },
     };
 
     static const GLuint elements[] = {
@@ -199,6 +204,7 @@ int main (int argc, char **argv) {
     glAttachShader(program, vshader);
     glAttachShader(program, fshader);
     glBindAttribLocation(program, 0, "position");
+    glBindAttribLocation(program, 1, "color");
     glLinkProgram(program);
 
     glDeleteShader(vshader);
@@ -242,7 +248,8 @@ int main (int argc, char **argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void *) 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) 0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) (3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebuf);
         glDrawElements(GL_TRIANGLES, sizeof(elements) / sizeof(elements[0]), GL_UNSIGNED_INT, (void *) 0);
