@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #define GL_GLEXT_PROTOTYPES 1
 #define GL3_PROTOTYPES 1
 
@@ -126,8 +129,8 @@ GLuint make_shader(const char * path, GLenum shader_type) {
 }
 
 struct vertex {
-    GLfloat position[4];
-    GLfloat color[4];
+    glm::vec4 position;
+    glm::vec4 color;
 };
 
 int main (int argc, char **argv) {
@@ -148,13 +151,13 @@ int main (int argc, char **argv) {
     float r_2 = r / 2.0f;
 
     static const vertex vertices[] = {
-        { { 0.0f, 0.0f, 0.0f, 0.0f },         { 0.0f, 0.0f, 0.0f, 1.0f } },
-        { { sqrt_3_2_r, -r_2, 0.0f, 0.0f },   { 0.0f, 0.0f, 1.0f, 1.0f } },
-        { { sqrt_3_2_r, r_2, 0.0f, 0.0f },    { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { { 0.0f, r, 0.0f, 0.0f },            { 0.0f, 1.0f, 1.0f, 1.0f } },
-        { { -sqrt_3_2_r, r_2, 0.0f, 0.0f },   { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { -sqrt_3_2_r, -r_2, 0.0f, 0.0f },  { 1.0f, 0.0f, 1.0f, 1.0f } },
-        { { 0.0f, -r, 0.0f, 0.0f },           { 1.0f, 1.0f, 0.0f, 1.0f } },
+        { glm::vec4(0.0f),                          glm::vec4(0.0f, 0.0f, 0.0f, 1.0f) },
+        { glm::vec4(sqrt_3_2_r, -r_2, 0.0f, 0.0f),  glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) },
+        { glm::vec4(sqrt_3_2_r, r_2, 0.0f, 0.0f),   glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
+        { glm::vec4(0.0f, r, 0.0f, 0.0f),           glm::vec4(0.0f, 1.0f, 1.0f, 1.0f) },
+        { glm::vec4(-sqrt_3_2_r, r_2, 0.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+        { glm::vec4(-sqrt_3_2_r, -r_2, 0.0f, 0.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f) },
+        { glm::vec4(0.0f, -r, 0.0f, 0.0f),          glm::vec4(1.0f, 1.0f, 0.0f, 1.0f) },
     };
 
     static const GLuint elements[] = {
