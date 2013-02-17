@@ -126,8 +126,8 @@ GLuint make_shader(const char * path, GLenum shader_type) {
 }
 
 struct vertex {
-    GLfloat position[3];
-    GLfloat color[3];
+    GLfloat position[4];
+    GLfloat color[4];
 };
 
 int main (int argc, char **argv) {
@@ -148,13 +148,13 @@ int main (int argc, char **argv) {
     float r_2 = r / 2.0f;
 
     static const vertex vertices[] = {
-        { { 0.0f, 0.0f, 0.0f },         { 1.0f, 0.0f, 0.0f } },
-        { { sqrt_3_2_r, -r_2, 0.0f },   { 1.0f, 0.0f, 0.0f } },
-        { { sqrt_3_2_r, r_2, 0.0f },    { 1.0f, 0.0f, 0.0f } },
-        { { 0.0f, r, 0.0f },            { 1.0f, 0.0f, 0.0f } },
-        { { -sqrt_3_2_r, r_2, 0.0f },   { 1.0f, 0.0f, 0.0f } },
-        { { -sqrt_3_2_r, -r_2, 0.0f },  { 1.0f, 0.0f, 0.0f } },
-        { { 0.0f, -r, 0.0f },           { 1.0f, 0.0f, 0.0f } },
+        { { 0.0f, 0.0f, 0.0f, 0.0f },         { 0.0f, 0.0f, 0.0f, 1.0f } },
+        { { sqrt_3_2_r, -r_2, 0.0f, 0.0f },   { 0.0f, 0.0f, 1.0f, 1.0f } },
+        { { sqrt_3_2_r, r_2, 0.0f, 0.0f },    { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { { 0.0f, r, 0.0f, 0.0f },            { 0.0f, 1.0f, 1.0f, 1.0f } },
+        { { -sqrt_3_2_r, r_2, 0.0f, 0.0f },   { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { -sqrt_3_2_r, -r_2, 0.0f, 0.0f },  { 1.0f, 0.0f, 1.0f, 1.0f } },
+        { { 0.0f, -r, 0.0f, 0.0f },           { 1.0f, 1.0f, 0.0f, 1.0f } },
     };
 
     static const GLuint elements[] = {
@@ -234,9 +234,10 @@ int main (int argc, char **argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) 0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) (3 * sizeof(GLfloat)));
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) 0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) (4 * sizeof(GLfloat)));
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebuf);
         glDrawElements(GL_TRIANGLES, sizeof(elements) / sizeof(elements[0]), GL_UNSIGNED_INT, (void *) 0);
 
