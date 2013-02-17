@@ -53,7 +53,7 @@ void setup(int w, int h) {
     SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32 );
 
     g_window = SDL_CreateWindow(
-       ":O",
+       "<_>",
        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
        w, h,
        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
