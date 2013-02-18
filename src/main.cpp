@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define GL_GLEXT_PROTOTYPES 1
 #define GL3_PROTOTYPES 1
@@ -216,6 +217,18 @@ int main (int argc, char **argv) {
     }
 
     glUseProgram(program);
+
+    GLint loc_modelview, loc_projection;
+
+    loc_modelview = glGetUniformLocation(program, "modelview");
+    loc_projection = glGetUniformLocation(program, "projection");
+
+    glm::mat4 modelview = glm::lookAt(glm::vec3(0.0f, -5.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 projection = glm::perspective(80.0f, 1.0f, 0.1f, 10.0f);
+
+    glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
+    glUniformMatrix4fv(loc_projection, 1, GL_FALSE, glm::value_ptr(projection));
 
     while(not g_quit) {
         SDL_Event e;
