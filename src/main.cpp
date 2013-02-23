@@ -34,7 +34,6 @@ void lookup_color(size_t index, float &r, float &g, float &b) {
     b = 1.0f * color_table[index + 2] / 255.0f;
 }
 
-
 void setup(int w, int h) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
@@ -57,7 +56,7 @@ void setup(int w, int h) {
        "<_>",
        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
        w, h,
-       SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
+       SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
    );
 
     if (not g_window) {
@@ -135,7 +134,7 @@ struct vertex {
 };
 
 int main (int argc, char **argv) {
-    setup(480, 480);
+    setup(640, 480);
     foo();
 
     glClearColor(0, 0, 0, 0);
@@ -223,9 +222,11 @@ int main (int argc, char **argv) {
     loc_modelview = glGetUniformLocation(program, "modelview");
     loc_projection = glGetUniformLocation(program, "projection");
 
-    glm::mat4 modelview = glm::lookAt(glm::vec3(0.0f, -5.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    int w, h;
+    SDL_GetWindowSize(g_window, &w, &h);
 
-    glm::mat4 projection = glm::perspective(80.0f, 1.0f, 0.1f, 10.0f);
+    glm::mat4 modelview = glm::lookAt(glm::vec3(0.0f, -5.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 10.0f);
 
     glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
     glUniformMatrix4fv(loc_projection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -239,6 +240,17 @@ int main (int argc, char **argv) {
                 case SDL_KEYDOWN:
                 case SDL_MOUSEBUTTONDOWN:
                     g_quit = true;
+                    break;
+
+                case SDL_WINDOWEVENT:
+                    if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
+                        fprintf(stderr, "received window resize event\n");
+                        w = e.window.data1;
+                        h = e.window.data2;
+                        glViewport(0, 0, w, h);
+                        projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 10.0f);
+                        glUniformMatrix4fv(loc_projection, 1, GL_FALSE, glm::value_ptr(projection));
+                    }
                     break;
 
                 default:
