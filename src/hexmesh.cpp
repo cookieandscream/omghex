@@ -118,6 +118,7 @@ void HexMesh::gl_setup() {
 
 void HexMesh::draw() const {
     glBindVertexArray(m_vao);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, m_elements.size() * sizeof(m_elements[0]), GL_UNSIGNED_INT, (void *) 0);
     glBindVertexArray(0);
 }
