@@ -173,7 +173,7 @@ int main (int argc, char **argv) {
     int w, h;
     SDL_GetWindowSize(g_window, &w, &h);
 
-    glm::vec3 camera_offset(0.0f, -6.0f, 12.0f);
+    glm::vec3 camera_offset(0.0f, -1.0f, 12.0f);
     glm::vec3 camera_focus(hexmesh.get_centre());
     glm::vec3 camera_pos(camera_focus + camera_offset);
 
