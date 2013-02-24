@@ -21,7 +21,8 @@
 
 #include "color_table.h"
 #include "utils.h"
-#include "vertex.hpp"
+
+#include "hexmesh.hpp"
 
 SDL_Window *g_window;
 SDL_GLContext g_glContext;
@@ -137,46 +138,8 @@ int main (int argc, char **argv) {
 
     g_quit = false;
 
-    const float sqrt_3 = 1.732051f;
-    std::cout << "sqrt(3): " << sqrt_3 << std::endl;
-    printf("sqrt(3): %f\n", sqrt_3);
-    printf("sqrt(3): %f\n", sqrtf(3));
-
-    const float r = 1.0f;
-    const float r_sqrt_3 = r / sqrt_3;
-    const float r_2_sqrt_3 = 2.0f * r / sqrt_3;
-
-    static const vertex vertices[] = {
-        { glm::vec4(0.0f),                          glm::vec4(0.0f, 0.0f, 0.0f, 1.0f) },
-        { glm::vec4(r, -r_sqrt_3, 0.0f, 0.0f),  glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) },
-        { glm::vec4(r,  r_sqrt_3, 0.0f, 0.0f),   glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
-        { glm::vec4(0.0f, r_2_sqrt_3, 0.0f, 0.0f),           glm::vec4(0.0f, 1.0f, 1.0f, 1.0f) },
-        { glm::vec4(-r, r_sqrt_3, 0.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-        { glm::vec4(-r, -r_sqrt_3, 0.0f, 0.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f) },
-        { glm::vec4(0.0f, -r_2_sqrt_3, 0.0f, 0.0f),          glm::vec4(1.0f, 1.0f, 0.0f, 1.0f) },
-    };
-
-    static const GLuint elements[] = {
-        0, 1, 2,
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 5,
-        0, 5, 6,
-        0, 6, 1,
-    };
-
-    GLuint vbuf, ebuf, vao;
-
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    glGenBuffers(1, &vbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &ebuf);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebuf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    HexMesh hexmesh(4, 1.0f);
+    gl_assert_ok();
 
     GLuint vshader = make_shader("shader-src/blah.vert", GL_VERTEX_SHADER);
     if (not vshader) exit(1);
@@ -222,7 +185,7 @@ int main (int argc, char **argv) {
     SDL_GetWindowSize(g_window, &w, &h);
 
     glm::mat4 modelview = glm::lookAt(glm::vec3(0.0f, -5.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 10.0f);
+    glm::mat4 projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 100.0f);
 
     glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
     glUniformMatrix4fv(loc_projection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -244,7 +207,7 @@ int main (int argc, char **argv) {
                         w = e.window.data1;
                         h = e.window.data2;
                         glViewport(0, 0, w, h);
-                        projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 10.0f);
+                        projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 100.0f);
                         glUniformMatrix4fv(loc_projection, 1, GL_FALSE, glm::value_ptr(projection));
                     }
                     break;
@@ -257,13 +220,7 @@ int main (int argc, char **argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) 0);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *) (4 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebuf);
-        glDrawElements(GL_TRIANGLES, sizeof(elements) / sizeof(elements[0]), GL_UNSIGNED_INT, (void *) 0);
+        hexmesh.draw();
 
         gl_assert_ok();
         
