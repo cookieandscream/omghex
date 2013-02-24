@@ -13,4 +13,15 @@
 #include "SDL_opengl.h"
 #endif
 
+#define gl_assert_ok()  do {                                    \
+    GLenum error = glGetError();                                \
+    if (error) {                                                \
+        do {                                                    \
+            fprintf(stderr, "gl error in %s at line %d: %d\n",  \
+                __FILE__, __LINE__, error);                     \
+        } while ((error = glGetError()));                       \
+        exit(1);                                                \
+    }                                                           \
+} while (0)
+
 #endif
