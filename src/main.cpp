@@ -146,18 +146,18 @@ int main (int argc, char **argv) {
     printf("sqrt(3): %f\n", sqrt_3);
     printf("sqrt(3): %f\n", sqrtf(3));
 
-    float r = 1.0f;
-    float sqrt_3_2_r = sqrt_3 * r / 2.0f;
-    float r_2 = r / 2.0f;
+    const float r = 1.0f;
+    const float r_sqrt_3 = r / sqrt_3;
+    const float r_2_sqrt_3 = 2.0f * r / sqrt_3;
 
     static const vertex vertices[] = {
         { glm::vec4(0.0f),                          glm::vec4(0.0f, 0.0f, 0.0f, 1.0f) },
-        { glm::vec4(sqrt_3_2_r, -r_2, 0.0f, 0.0f),  glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) },
-        { glm::vec4(sqrt_3_2_r, r_2, 0.0f, 0.0f),   glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
-        { glm::vec4(0.0f, r, 0.0f, 0.0f),           glm::vec4(0.0f, 1.0f, 1.0f, 1.0f) },
-        { glm::vec4(-sqrt_3_2_r, r_2, 0.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-        { glm::vec4(-sqrt_3_2_r, -r_2, 0.0f, 0.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f) },
-        { glm::vec4(0.0f, -r, 0.0f, 0.0f),          glm::vec4(1.0f, 1.0f, 0.0f, 1.0f) },
+        { glm::vec4(r, -r_sqrt_3, 0.0f, 0.0f),  glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) },
+        { glm::vec4(r,  r_sqrt_3, 0.0f, 0.0f),   glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) },
+        { glm::vec4(0.0f, r_2_sqrt_3, 0.0f, 0.0f),           glm::vec4(0.0f, 1.0f, 1.0f, 1.0f) },
+        { glm::vec4(-r, r_sqrt_3, 0.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
+        { glm::vec4(-r, -r_sqrt_3, 0.0f, 0.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f) },
+        { glm::vec4(0.0f, -r_2_sqrt_3, 0.0f, 0.0f),          glm::vec4(1.0f, 1.0f, 0.0f, 1.0f) },
     };
 
     static const GLuint elements[] = {
