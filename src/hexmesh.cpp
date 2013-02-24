@@ -16,6 +16,14 @@ const static GLuint elements[] = {
     0, 6, 1,
 };
 
+// it's possible to render a hexagon with only four triangles
+//const static GLuint elements[] = {
+//    1, 2, 4,
+//    2, 3, 4,
+//    4, 5, 1,
+//    5, 6, 1,
+//};
+
 HexMesh::~HexMesh() {
     fprintf(stderr, "destructing a hexmesh\n");
     glDeleteVertexArrays(1, &m_vao);
