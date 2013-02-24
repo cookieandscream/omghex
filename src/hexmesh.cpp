@@ -108,10 +108,17 @@ void HexMesh::gl_setup() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void HexMesh::draw() {
+void HexMesh::draw() const {
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, m_elements.size() * sizeof(m_elements[0]), GL_UNSIGNED_INT, (void *) 0);
     glBindVertexArray(0);
 }
 
-
+glm::vec3 HexMesh::get_centre() const {
+    const float map_half_radius = m_tile_radius * m_map_edge - 1;
+    return glm::vec3(
+        map_half_radius,
+        sqrt_3 * map_half_radius,
+        0.0f
+    );
+}

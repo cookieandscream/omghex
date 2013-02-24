@@ -4,6 +4,8 @@
 #include <cassert>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "gl3.h"
 #include "vertex.hpp"
 
@@ -29,7 +31,9 @@ public:
     void generate_geometry();
     void gl_setup();
 
-    void draw();
+    glm::vec3 get_centre() const;
+
+    void draw() const;
 
 private:
     const unsigned m_map_edge;
@@ -42,6 +46,5 @@ private:
     GLuint m_vertex_buffer;
     GLuint m_element_buffer;
 };
-
 
 #endif
