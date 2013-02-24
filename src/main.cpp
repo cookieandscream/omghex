@@ -7,19 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#define GL_GLEXT_PROTOTYPES 1
-#define GL3_PROTOTYPES 1
-
-#include "SDL.h"
-
-#if defined(__MACOSX__)
-#include <OpenGL/gl3.h>
-//#include <OpenGL/gl3ext.h>
-#else
-#include "SDL_opengl.h"
-#endif
-
 #include "color_table.h"
+#include "gl3.h"
 #include "utils.h"
 
 #include "hexmesh.hpp"

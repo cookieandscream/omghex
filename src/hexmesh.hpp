@@ -4,18 +4,7 @@
 #include <cassert>
 #include <vector>
 
-#define GL_GLEXT_PROTOTYPES 1
-#define GL3_PROTOTYPES 1
-
-#include "SDL.h"
-
-#if defined(__MACOSX__)
-#include <OpenGL/gl3.h>
-//#include <OpenGL/gl3ext.h>
-#else
-#include "SDL_opengl.h"
-#endif
-
+#include "gl3.h"
 #include "vertex.hpp"
 
 class HexMesh /* public Mesh */ {
