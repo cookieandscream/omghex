@@ -21,6 +21,7 @@
 
 #include "color_table.h"
 #include "utils.h"
+#include "vertex.hpp"
 
 SDL_Window *g_window;
 SDL_GLContext g_glContext;
@@ -127,11 +128,6 @@ GLuint make_shader(const char * path, GLenum shader_type) {
 
     return shader;
 }
-
-struct vertex {
-    glm::vec4 position;
-    glm::vec4 color;
-};
 
 int main (int argc, char **argv) {
     setup(640, 480);
