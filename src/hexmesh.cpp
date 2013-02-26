@@ -8,21 +8,8 @@
 const static float sqrt_3 = 1.732051f;
 
 const static GLuint elements[] = {
-    0, 1, 2,
-    0, 2, 3,
-    0, 3, 4,
-    0, 4, 5,
-    0, 5, 6,
-    0, 6, 1,
+    0, 1, 2, 3, 4, 5, 6, 1,
 };
-
-// it's possible to render a hexagon with only four triangles
-//const static GLuint elements[] = {
-//    1, 2, 4,
-//    2, 3, 4,
-//    4, 5, 1,
-//    5, 6, 1,
-//};
 
 HexMesh::~HexMesh() {
     fprintf(stderr, "destructing a hexmesh\n");
@@ -40,7 +27,7 @@ void HexMesh::generate_geometry() {
     m_vertices.reserve(7 * square_edge * square_edge);
 
     m_elements.clear();
-    m_elements.reserve(6 * 3 * square_edge * square_edge);
+    m_elements.reserve(9 * square_edge * square_edge);
 
     for (int map_y = 0; map_y < square_edge; map_y ++) {
         for (int map_x = 0; map_x < square_edge; map_x ++) {
@@ -86,6 +73,7 @@ void HexMesh::generate_geometry() {
             for (unsigned i = 0; i < sizeof(elements) / sizeof(elements[0]); i++) {
                 m_elements.push_back(v_pos + elements[i]);
             }
+            m_elements.push_back((GLuint) -1);
         }
     }
 
@@ -119,7 +107,10 @@ void HexMesh::gl_setup() {
 void HexMesh::draw() const {
     glBindVertexArray(m_vao);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, m_elements.size() * sizeof(m_elements[0]), GL_UNSIGNED_INT, (void *) 0);
+    glEnable(GL_PRIMITIVE_RESTART);
+    glPrimitiveRestartIndex((GLuint) -1);
+    glDrawElements(GL_TRIANGLE_FAN, m_elements.size() * sizeof(m_elements[0]), GL_UNSIGNED_INT, (void *) 0);
+    glDisable(GL_PRIMITIVE_RESTART);
     glBindVertexArray(0);
 }
 
