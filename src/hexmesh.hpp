@@ -1,5 +1,5 @@
-#ifndef TRAINS_MESH_HPP
-#define TRAINS_MESH_HPP
+#ifndef TRAINS_HEXMESH_HPP
+#define TRAINS_HEXMESH_HPP
 
 #include <cassert>
 #include <vector>
