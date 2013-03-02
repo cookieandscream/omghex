@@ -61,6 +61,7 @@ void setup(int w, int h) {
         exit(1);
     }
 
+    glClearColor(0, 0, 0, 0);
     glViewport(0, 0, w, h);
 }
 
@@ -69,7 +70,7 @@ void foo() {
     size_t shader_len;
 
     if ((shader_src = (char *) file_contents("shader-src/blah.vert", &shader_len))) {
-        std::cout << "shader source (" << shader_len << "):" << std::endl << shader_src << std::endl;
+        std::cerr << "shader source (" << shader_len << "):" << std::endl << shader_src << std::endl;
         free(shader_src);
     }
 }
@@ -111,8 +112,6 @@ GLuint make_shader(const char * path, GLenum shader_type) {
 int main (int argc, char **argv) {
     setup(640, 480);
     foo();
-
-    glClearColor(0, 0, 0, 0);
 
     g_quit = false;
 
@@ -162,7 +161,7 @@ int main (int argc, char **argv) {
     int w, h;
     SDL_GetWindowSize(g_window, &w, &h);
 
-    const float mouse_sensitivity = 0.2f;
+    const float mouse_sensitivity = 0.1f;
     glm::vec3 camera_offset(0.0f, -1.0f, 12.0f);
     glm::vec3 camera_focus(hexmesh.get_centre());
     glm::vec3 camera_pos(camera_focus + camera_offset);
@@ -178,6 +177,32 @@ int main (int argc, char **argv) {
 
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
+                case SDL_KEYDOWN:
+                    switch (e.key.keysym.sym) {
+                        case SDLK_LEFT:
+                            camera_focus.x -= mouse_sensitivity;
+                            break;
+                        case SDLK_RIGHT:
+                            camera_focus.x += mouse_sensitivity;
+                            break;
+                        case SDLK_UP:
+                            camera_focus.y += mouse_sensitivity;
+                            break;
+                        case SDLK_DOWN:
+                            camera_focus.y -= mouse_sensitivity;
+                            break;
+                        case SDLK_SPACE:
+                            camera_focus = hexmesh.get_centre();
+                            break;
+                        default:
+                            // do nothing
+                            break;
+                    }
+                    camera_pos = camera_focus + camera_offset;
+                    modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 1.0f, 0.0f));
+                    glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
+                    break;
+
                 case SDL_QUIT:
                     g_quit = true;
                     break;
