@@ -38,12 +38,20 @@ void HexMesh::generate_geometry() {
             const unsigned v_pos = m_vertices.size();
 
             const unsigned color_index = 3 * (cell % color_table_num_colors);
-            const glm::vec4 color = glm::vec4(
-               float(color_table[color_index + 0]) / 255.0f,
-               float(color_table[color_index + 1]) / 255.0f,
-               float(color_table[color_index + 2]) / 255.0f,
-               1.0f
-            );
+
+            glm::vec4 color;
+            if (map_y == m_map_edge - 1 && map_x == map_y) {
+                // chuck a black one in the middle to make orientation of large map more obvious
+                color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            }
+            else {
+                color = glm::vec4(
+                    float(color_table[color_index + 0]) / 255.0f,
+                    float(color_table[color_index + 1]) / 255.0f,
+                    float(color_table[color_index + 2]) / 255.0f,
+                    1.0f
+                );
+            }
 
             const glm::vec4 cell_origin = glm::vec4(
                 float(2 * map_x - map_y),
