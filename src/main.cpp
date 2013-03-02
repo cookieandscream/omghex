@@ -116,7 +116,7 @@ int main (int argc, char **argv) {
 
     g_quit = false;
 
-    HexMesh hexmesh(5, 1.0f);
+    HexMesh hexmesh(49, 1.0f);
     gl_assert_ok();
 
     GLuint vshader = make_shader("shader-src/blah.vert", GL_VERTEX_SHADER);
@@ -162,6 +162,7 @@ int main (int argc, char **argv) {
     int w, h;
     SDL_GetWindowSize(g_window, &w, &h);
 
+    const float mouse_sensitivity = 0.2f;
     glm::vec3 camera_offset(0.0f, -1.0f, 12.0f);
     glm::vec3 camera_focus(hexmesh.get_centre());
     glm::vec3 camera_pos(camera_focus + camera_offset);
@@ -178,8 +179,6 @@ int main (int argc, char **argv) {
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
                 case SDL_QUIT:
-                case SDL_KEYDOWN:
-                case SDL_MOUSEBUTTONDOWN:
                     g_quit = true;
                     break;
 
@@ -192,6 +191,13 @@ int main (int argc, char **argv) {
                         projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 100.0f);
                         glUniformMatrix4fv(loc_projection, 1, GL_FALSE, glm::value_ptr(projection));
                     }
+                    break;
+
+                case SDL_MOUSEWHEEL:
+                    camera_focus += glm::vec3(mouse_sensitivity * -e.wheel.x, mouse_sensitivity * e.wheel.y, 0.0f);
+                    camera_pos = camera_focus + camera_offset;
+                    modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 1.0f, 0.0f));
+                    glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
                     break;
 
                 default:
