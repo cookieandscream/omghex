@@ -11,7 +11,7 @@
 #include "gl3.h"
 #include "utils.h"
 
-#include "hexmesh.hpp"
+#include "hexmap.hpp"
 
 SDL_Window *g_window;
 SDL_GLContext g_glContext;
@@ -115,7 +115,7 @@ int main (int argc, char **argv) {
 
     g_quit = false;
 
-    HexMesh hexmesh(49, 1.0f);
+    HexMap hexmap(49, 1.0f);
     gl_assert_ok();
 
     GLuint vshader = make_shader("shader-src/blah.vert", GL_VERTEX_SHADER);
@@ -163,7 +163,7 @@ int main (int argc, char **argv) {
 
     const float mouse_sensitivity = 0.1f;
     glm::vec3 camera_offset(0.0f, -1.0f, 12.0f);
-    glm::vec3 camera_focus(hexmesh.get_centre());
+    glm::vec3 camera_focus(hexmap.get_centre());
     glm::vec3 camera_pos(camera_focus + camera_offset);
 
     glm::mat4 modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -192,7 +192,7 @@ int main (int argc, char **argv) {
                             camera_focus.y -= mouse_sensitivity;
                             break;
                         case SDLK_SPACE:
-                            camera_focus = hexmesh.get_centre();
+                            camera_focus = hexmap.get_centre();
                             break;
                         default:
                             // do nothing
@@ -233,7 +233,7 @@ int main (int argc, char **argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        hexmesh.draw();
+        hexmap.draw();
 
         gl_assert_ok();
         

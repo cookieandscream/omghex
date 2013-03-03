@@ -1,5 +1,5 @@
 TARGET=trains
-OBJS=src/main.o src/utils.o src/hexmesh.o
+OBJS=src/main.o src/utils.o src/hexmap.o
 
 CFLAGS=$(shell sdl2-config --cflags) -Wall
 CXXFLAGS=$(shell sdl2-config --cflags) -Wall
