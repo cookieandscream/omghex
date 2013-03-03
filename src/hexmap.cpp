@@ -148,7 +148,11 @@ void HexMap::draw() const {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex((GLuint) -1);
+    glEnable(GL_DEPTH_TEST);
+
     glDrawElements(GL_TRIANGLE_FAN, m_element_count, GL_UNSIGNED_INT, (void *) 0);
+
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_PRIMITIVE_RESTART);
     glBindVertexArray(0);
 }
