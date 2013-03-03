@@ -13,4 +13,6 @@ extern "C" {
 }
 #endif
 
+#define ARRLEN(a)   (sizeof(a) / sizeof(a[0]))
+
 #endif

@@ -29,6 +29,8 @@ public:
         fprintf(stderr, "constructing a hexmap...\n");
 
         generate_tiles();
+        generate_height_data_from_tile_color(11, -5);
+        add_heights_to_vertices_simple(0.2f);
         gl_setup();
 
         fprintf(stderr, "ok\n");
@@ -37,6 +39,9 @@ public:
     ~HexMap();
 
     void generate_tiles();
+    void generate_height_data_from_tile_color(int mod, int offset);
+    void add_heights_to_vertices_simple(float step);
+
     void gl_setup();
 
     glm::vec3 get_centre() const;

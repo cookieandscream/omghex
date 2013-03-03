@@ -1,6 +1,7 @@
 #include <glm/glm.hpp>
 
 #include "color_table.h"
+#include "utils.h"
 
 #include "hexmap.hpp"
 
@@ -88,6 +89,21 @@ void HexMap::generate_tiles() {
 
     fprintf(stderr, "generated %zu vertices\n", m_vertices.size());
     fprintf(stderr, "generated %zu tiles\n", m_tiles.size());
+}
+
+void HexMap::generate_height_data_from_tile_color(int mod, int offset) {
+    for (std::vector<tile>::iterator t = m_tiles.begin(); t != m_tiles.end(); ++ t) {
+        unsigned color = 3 * (t->id % color_table_num_colors);
+        t->height = color % mod + offset;
+    }
+}
+
+void HexMap::add_heights_to_vertices_simple(float step) {
+    for (std::vector<tile>::const_iterator t = m_tiles.begin(); t != m_tiles.end(); ++t) {
+        for (unsigned i = 0; i < ARRLEN(t->elements); i++) {
+            m_vertices[t->elements[i]].position += glm::vec4(0.0f, 0.0f, step * t->height, 0.0f);
+        }
+    }
 }
 
 void HexMap::gl_setup() {
