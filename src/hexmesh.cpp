@@ -117,7 +117,7 @@ void HexMesh::draw() const {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex((GLuint) -1);
-    glDrawElements(GL_TRIANGLE_FAN, m_elements.size() * sizeof(m_elements[0]), GL_UNSIGNED_INT, (void *) 0);
+    glDrawElements(GL_TRIANGLE_FAN, m_elements.size(), GL_UNSIGNED_INT, (void *) 0);
     glDisable(GL_PRIMITIVE_RESTART);
     glBindVertexArray(0);
 }
