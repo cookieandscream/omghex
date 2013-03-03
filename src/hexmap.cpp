@@ -93,7 +93,7 @@ void HexMap::generate_tiles() {
 
 void HexMap::generate_height_data_from_tile_color(int mod, int offset) {
     for (std::vector<tile>::iterator t = m_tiles.begin(); t != m_tiles.end(); ++ t) {
-        unsigned color = 3 * (t->id % color_table_num_colors);
+        int color = t->id % color_table_num_colors;
         t->height = color % mod + offset;
     }
 }
