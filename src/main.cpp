@@ -166,7 +166,7 @@ int main (int argc, char **argv) {
     glm::vec3 camera_focus(hexmap.get_centre());
     glm::vec3 camera_pos(camera_focus + camera_offset);
 
-    glm::mat4 modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 projection = glm::perspective(80.0f, (float) w / (float) h, 0.1f, 100.0f);
 
     glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
@@ -180,18 +180,19 @@ int main (int argc, char **argv) {
                 case SDL_KEYDOWN:
                     switch (e.key.keysym.sym) {
                         case SDLK_LEFT:
-                            camera_focus.x -= mouse_sensitivity;
+                            camera_offset.x -= 1.0f;
                             break;
                         case SDLK_RIGHT:
-                            camera_focus.x += mouse_sensitivity;
+                            camera_offset.x += 1.0f;
                             break;
                         case SDLK_UP:
-                            camera_focus.y += mouse_sensitivity;
+                            camera_offset.y += 1.0f;
                             break;
                         case SDLK_DOWN:
-                            camera_focus.y -= mouse_sensitivity;
+                            camera_offset.y -= 1.0f;
                             break;
                         case SDLK_SPACE:
+                            camera_offset = glm::vec3(0.0f, -1.0f, 12.0f);
                             camera_focus = hexmap.get_centre();
                             break;
                         default:
@@ -199,7 +200,7 @@ int main (int argc, char **argv) {
                             break;
                     }
                     camera_pos = camera_focus + camera_offset;
-                    modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 1.0f, 0.0f));
+                    modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 0.0f, 1.0f));
                     glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
                     break;
 
@@ -221,7 +222,7 @@ int main (int argc, char **argv) {
                 case SDL_MOUSEWHEEL:
                     camera_focus += glm::vec3(mouse_sensitivity * -e.wheel.x, mouse_sensitivity * e.wheel.y, 0.0f);
                     camera_pos = camera_focus + camera_offset;
-                    modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 1.0f, 0.0f));
+                    modelview = glm::lookAt(camera_pos, camera_focus, glm::vec3(0.0f, 0.0f, 1.0f));
                     glUniformMatrix4fv(loc_modelview, 1, GL_FALSE, glm::value_ptr(modelview));
                     break;
 
