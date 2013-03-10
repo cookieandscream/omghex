@@ -37,6 +37,7 @@ void HexMap::generate_tiles() {
 
             tile tmp;
             tmp.id = m_tiles.size();
+            tmp.grid_position = glm::ivec2(map_x, map_y);
             m_tiles.push_back(tmp);
 
             tile &t = m_tiles.back();
@@ -102,6 +103,52 @@ void HexMap::add_heights_to_vertices_simple(float step) {
     for (std::vector<tile>::const_iterator t = m_tiles.begin(); t != m_tiles.end(); ++t) {
         for (unsigned i = 0; i < ARRLEN(t->elements); i++) {
             m_vertices[t->elements[i]].position += glm::vec4(0.0f, 0.0f, step * t->height, 0.0f);
+        }
+    }
+}
+
+void HexMap::add_heights_to_vertices_joined(float step) {
+    const unsigned square_edge = 2 * m_map_edge - 1;
+
+    for (int map_y = 0; map_y < square_edge; map_y ++) {
+        for (int map_x = 0; map_x < square_edge; map_x ++) {
+            if (map_y - map_x >= (int) m_map_edge || map_x - map_y >= (int) m_map_edge) {
+                continue;
+            }
+
+            if (tile_index_at_x_y(map_x, map_y) == (unsigned) -1)  continue;
+
+            const tile &t = tile_at_x_y(map_x, map_y);
+
+            const glm::ivec4 offsets[] = {
+                glm::ivec4(0, -1, 1, 0),
+                glm::ivec4(1, 0, 1, 1),
+                glm::ivec4(1, 1, 0, 1),
+                glm::ivec4(0, 1, -1, 0),
+                glm::ivec4(-1, 0, -1, -1),
+                glm::ivec4(-1, -1, 0, -1)
+            };
+
+            for (unsigned e = 1; e <= 6; e++) {
+                const glm::ivec4 &offset = offsets[e - 1];
+
+                float height = step * t.height;
+                int count = 1;
+
+                if (tile_index_at_x_y(map_x + offset.x, map_y + offset.y) != (unsigned) -1) {
+                    height += step * tile_at_x_y(map_x + offset.x, map_y + offset.y).height;
+                    count ++;
+                }
+
+                if (tile_index_at_x_y(map_x + offset.z, map_y + offset.w) != (unsigned) -1) {
+                    height += step * tile_at_x_y(map_x + offset.z, map_y + offset.w).height;
+                    count ++;
+                }
+
+                if (count > 1)  height /= count;
+
+                m_vertices[t.elements[e]].position.z = height;
+            }
         }
     }
 }

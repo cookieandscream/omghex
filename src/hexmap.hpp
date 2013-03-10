@@ -14,6 +14,7 @@
 struct tile {
     unsigned id;
     int height;
+    glm::ivec2 grid_position;
 
     GLuint elements[7];
     std::vector<GLuint> extra_vertices; // FIXME
@@ -30,7 +31,8 @@ public:
 
         generate_tiles();
         generate_height_data_from_tile_color(11, -5);
-        add_heights_to_vertices_simple(0.2f);
+//        add_heights_to_vertices_simple(0.2f);
+        add_heights_to_vertices_joined(0.2f);
         gl_setup();
 
         fprintf(stderr, "ok\n");
@@ -41,6 +43,7 @@ public:
     void generate_tiles();
     void generate_height_data_from_tile_color(int mod, int offset);
     void add_heights_to_vertices_simple(float step);
+    void add_heights_to_vertices_joined(float step);
 
     void gl_setup();
 
@@ -61,6 +64,26 @@ private:
     GLuint m_vao;
     GLuint m_vertex_buffer;
     GLuint m_element_buffer;
+
+    unsigned tile_index_at_x_y(int x, int y) const;
+    const tile &tile_at_x_y(int x, int y) const;
 };
+
+inline unsigned HexMap::tile_index_at_x_y(int x, int y) const {
+    const unsigned square_edge = 2 * m_map_edge - 1;
+
+    if (x < 0 || y < 0)  return (unsigned) -1;
+    if (x >= square_edge || y >= square_edge)  return (unsigned) -1;
+
+    return m_tile_index[y * square_edge + x];
+}
+
+inline const tile &HexMap::tile_at_x_y(int x, int y) const {
+    const unsigned index = tile_index_at_x_y(x, y);
+    assert(index != (unsigned) -1);
+    assert(index < m_tiles.size());
+
+    return m_tiles[index];
+}
 
 #endif
