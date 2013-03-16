@@ -7,6 +7,8 @@
 
 const static float sqrt_3 = 1.732051f;
 
+const static GLuint primitive_restart_index = (GLuint) -1;
+
 HexMap::~HexMap() {
     fprintf(stderr, "destructing a hexmap\n");
     glDeleteVertexArrays(1, &m_vao);
@@ -100,9 +102,12 @@ void HexMap::generate_height_data_from_tile_color(int mod, int offset) {
 }
 
 void HexMap::add_heights_to_vertices_simple(float step) {
-    for (std::vector<tile>::const_iterator t = m_tiles.begin(); t != m_tiles.end(); ++t) {
+    for (std::vector<tile>::iterator t = m_tiles.begin(); t != m_tiles.end(); ++t) {
         for (unsigned i = 0; i < ARRLEN(t->elements); i++) {
             m_vertices[t->elements[i]].position += glm::vec4(0.0f, 0.0f, step * t->height, 0.0f);
+        }
+        for (unsigned i = 0; i < ARRLEN(t->risers); i++) {
+            t->risers[i] = primitive_restart_index;
         }
     }
 }
@@ -118,7 +123,7 @@ void HexMap::add_heights_to_vertices_joined(float step) {
 
             if (tile_index_at_x_y(map_x, map_y) == (unsigned) -1)  continue;
 
-            const tile &t = tile_at_x_y(map_x, map_y);
+            tile &t = tile_at_x_y(map_x, map_y);
 
             const glm::ivec4 offsets[] = {
                 glm::ivec4(0, -1, 1, 0),
@@ -149,6 +154,10 @@ void HexMap::add_heights_to_vertices_joined(float step) {
 
                 m_vertices[t.elements[e]].position.z = height;
             }
+
+            for (unsigned i = 0; i < ARRLEN(t.risers); i++) {
+                t.risers[i] = primitive_restart_index;
+            }
         }
     }
 }
@@ -170,9 +179,17 @@ void HexMap::gl_setup() {
         for (int i = 0; i < sizeof(element_order) / sizeof(element_order[0]); i++) {
             elements.push_back(t->elements[element_order[i]]);
         }
-        elements.push_back((GLuint) -1);
+        elements.push_back(primitive_restart_index);
 
-        // FIXME add elements for risers, if any
+        // add elements for risers, if any
+        for (unsigned i = 0; i < ARRLEN(t->risers); i++) {
+            if (t->risers[i] != primitive_restart_index) {
+                for (unsigned j = 0; j < 4; j++) {
+                    elements.push_back(t->risers[i] + j);
+                }
+                elements.push_back(primitive_restart_index);
+            }
+        }
     }
     m_element_count = elements.size();
 
@@ -194,7 +211,7 @@ void HexMap::draw() const {
     glBindVertexArray(m_vao);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_PRIMITIVE_RESTART);
-    glPrimitiveRestartIndex((GLuint) -1);
+    glPrimitiveRestartIndex(primitive_restart_index);
     glEnable(GL_DEPTH_TEST);
 
     glDrawElements(GL_TRIANGLE_FAN, m_element_count, GL_UNSIGNED_INT, (void *) 0);

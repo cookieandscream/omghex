@@ -17,7 +17,7 @@ struct tile {
     glm::ivec2 grid_position;
 
     GLuint elements[7];
-    std::vector<GLuint> extra_vertices; // FIXME
+    GLuint risers[6];
 };
 
 class HexMap /* : public Mesh */ {
@@ -67,6 +67,7 @@ private:
 
     unsigned tile_index_at_x_y(int x, int y) const;
     const tile &tile_at_x_y(int x, int y) const;
+    tile &tile_at_x_y(int x, int y);
 };
 
 inline unsigned HexMap::tile_index_at_x_y(int x, int y) const {
@@ -78,12 +79,16 @@ inline unsigned HexMap::tile_index_at_x_y(int x, int y) const {
     return m_tile_index[y * square_edge + x];
 }
 
-inline const tile &HexMap::tile_at_x_y(int x, int y) const {
+inline tile &HexMap::tile_at_x_y(int x, int y) {
     const unsigned index = tile_index_at_x_y(x, y);
     assert(index != (unsigned) -1);
     assert(index < m_tiles.size());
 
     return m_tiles[index];
+}
+
+inline const tile &HexMap::tile_at_x_y(int x, int y) const {
+    return tile_at_x_y(x, y);
 }
 
 #endif
