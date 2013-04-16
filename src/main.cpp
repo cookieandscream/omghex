@@ -115,7 +115,7 @@ int main (int argc, char **argv) {
 
     g_quit = false;
 
-    HexMap hexmap(49, 1.0f);
+    HexMap hexmap(10, 1.0f);
     gl_assert_ok();
 
     GLuint vshader = make_shader("shader-src/blah.vert", GL_VERTEX_SHADER);

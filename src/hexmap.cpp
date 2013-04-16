@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include <glm/glm.hpp>
 
 #include "color_table.h"
@@ -161,6 +163,63 @@ void HexMap::add_heights_to_vertices_joined(float step) {
         }
     }
 }
+
+void HexMap::add_heights_to_vertices_ridged(float step, int threshold) {
+    const unsigned square_edge = 2 * m_map_edge - 1;
+
+    for (int map_y = 0; map_y < square_edge; map_y ++) {
+        for (int map_x = 0; map_x < square_edge; map_x ++) {
+            if (map_y - map_x >= (int) m_map_edge || map_x - map_y >= (int) m_map_edge) {
+                continue;
+            }
+
+            if (tile_index_at_x_y(map_x, map_y) == (unsigned) -1)  continue;
+
+            tile &t = tile_at_x_y(map_x, map_y);
+
+            const glm::ivec4 offsets[] = {
+                glm::ivec4(0, -1, 1, 0),
+                glm::ivec4(1, 0, 1, 1),
+                glm::ivec4(1, 1, 0, 1),
+                glm::ivec4(0, 1, -1, 0),
+                glm::ivec4(-1, 0, -1, -1),
+                glm::ivec4(-1, -1, 0, -1)
+            };
+
+            for (unsigned e = 1; e <= 6; e++) {
+                const glm::ivec4 &offset = offsets[e - 1];
+
+                float height = step * t.height;
+                int count = 1;
+
+                if (tile_index_at_x_y(map_x + offset.x, map_y + offset.y) != (unsigned) -1) {
+                    const tile &other = tile_at_x_y(map_x + offset.x, map_y + offset.y);
+                    if (abs(other.height - t.height) < threshold) {
+                        height += step * other.height;
+                        count ++;
+                    }
+                }
+
+                if (tile_index_at_x_y(map_x + offset.z, map_y + offset.w) != (unsigned) -1) {
+                    const tile &other = tile_at_x_y(map_x + offset.z, map_y + offset.w);
+                    if (abs(other.height - t.height) < threshold) {
+                        height += step * other.height;
+                        count ++;
+                    }
+                }
+
+                if (count > 1)  height /= count;
+
+                m_vertices[t.elements[e]].position.z = height;
+            }
+
+            for (unsigned i = 0; i < ARRLEN(t.risers); i++) {
+                t.risers[i] = primitive_restart_index;
+            }
+        }
+    }
+}
+
 
 void HexMap::gl_setup() {
     fprintf(stderr, "setting up gl objects\n");

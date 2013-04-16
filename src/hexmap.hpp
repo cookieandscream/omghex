@@ -33,6 +33,7 @@ public:
         generate_height_data_from_tile_color(11, -5);
 //        add_heights_to_vertices_simple(0.2f);
         add_heights_to_vertices_joined(0.2f);
+//        add_heights_to_vertices_ridged(1.0f, 4);
         gl_setup();
 
         fprintf(stderr, "ok\n");
@@ -44,6 +45,7 @@ public:
     void generate_height_data_from_tile_color(int mod, int offset);
     void add_heights_to_vertices_simple(float step);
     void add_heights_to_vertices_joined(float step);
+    void add_heights_to_vertices_ridged(float step, int threshold);
 
     void gl_setup();
 
